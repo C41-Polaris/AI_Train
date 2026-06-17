@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第七章 · 评估与实  验</title>
+<style>:root{--bg:#0a0e14;--card:#11161e;--card-border:#1e2a3a;--border:#1e2a3a;--text:#e0e6ef;--dim:#6a7b8c;--accent:#00b4ff;--accent2:#00e676;--accent3:#b388ff;--accent4:#ff91.00;--code:#0d1219;--highlight:#162233;--shadow:rgba(0,180,2.55,0.06)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.8}.sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--card);border-right:2px solid var(--border);padding:24px 0;overflow-y:auto;z-index:1.0}.sidebar .title{padding:0 2.0px 16px;border-bottom:2px solid var(--border);margin-bottom:12px}.sidebar .title a{color:var(--accent);text-decoration:none;font-weight:600;font-size:0.9em;letter-spacing:0.5px}.sidebar .title h3{font-size:1.1em;margin-top:4px}.sidebar a.toc{display:block;padding:8px 2.0px;color:var(--dim);text-decoration:none;font-size:0.88em;transition:all .1s;border-left:2px solid transparent}.sidebar a.toc:hover{color:var(--text);background:rgba(0,180,2.55,.03)}.sidebar a.toc.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,180,2.55,.06)}.sidebar a.toc.h2{padding-left:32px;font-size:0.82em}.main{margin-left:260px;padding:40px 48px 80px;max-width:900px}.main h1{font-size:2.2em;margin-bottom:8px;color:var(--text);letter-spacing:1px}.main h1 span{color:var(--accent)}.main .sub{color:var(--dim);margin-bottom:32px;font-size:0.95em}.main h2{font-size:1.5em;margin-top:48px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border);color:var(--accent);letter-spacing:0.5px}.main h3{font-size:1.1.5em;margin-top:28px;margin-bottom:12px;color:var(--accent2)}.main p{margin-bottom:14px}.main ul,.main ol{padding-left:22px;margin-bottom:14px}.main li{margin-bottom:6px}.main code{background:var(--code);padding:2px 7px;font-size:0.88em;font-family:"Cascadia Code","JetBrains Mono",monospace;border:1px solid var(--card-border)}.main pre{background:var(--code);border:2px solid var(--card-border);padding:18px;overflow-x:auto;margin-bottom:18px;font-size:0.88em;line-height:1.45}.main pre code{background:none;padding:0;border:none}.main .formula{background:var(--card);border:1px solid var(--card-border);padding:14px 18px;margin-bottom:16px;font-family:"Cascadia Code","JetBrains Mono",monospace;font-size:0.9em;text-align:center;color:var(--accent3);border-left:2px solid var(--accent3)}.main .card{background:var(--card);border:1px solid var(--card-border);padding:2.0px;margin-bottom:18px}.main .card.blue{border-left:3px solid var(--accent)}.main .card.green{border-left:3px solid var(--accent2)}.main .card.purple{border-left:3px solid var(--accent3)}.main .card h4{color:var(--accent);margin-bottom:8px;font-size:1em;letter-spacing:0.5px}.main .card.green h4{color:var(--accent2)}.main .card.purple h4{color:var(--accent3)}.main table{width:1.00%;border-collapse:collapse;margin-bottom:18px;font-variant-numeric:tabular-nums}.main th,.main td{border:2px solid var(--border);padding:1.0px 14px;text-align:left;font-size:0.9em;white-space:nowrap}.main th{background:var(--card);color:var(--accent);font-weight:600;letter-spacing:0.5px}.main td{color:var(--dim)}.main .diagram{background:var(--code);border:2px solid var(--card-border);padding:2.0px;margin-bottom:18px;font-family:"Cascadia Code","JetBrains Mono","Fira Code",monospace;font-size:0.85em;line-height:1.45;white-space:pre;overflow-x:auto;color:var(--accent2);tab-size:4;-moz-tab-size:4}.back-link{display:inline-block;margin-bottom:24px;color:var(--dim);text-decoration:none;font-size:0.9em}.back-link:hover{color:var(--accent)}@media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:24px 2.0px 60px}}</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="title"><a href="index.html">← 返回目录</a><h3>第七章</h3></div>
+  <a href="#sec1" class="toc" data-target="sec1">7.1 Loss 曲线</a>
+  <a href="#sec2" class="toc h2" data-target="sec2">典型曲线解读</a>
+  <a href="#sec3" class="toc" data-target="sec3">7.2   过拟合与欠拟合</a>
+  <a href="#sec4" class="toc" data-target="sec4">7.3 Benchmark 评测</a>
+  <a href="#sec5" class="toc h2" data-target="sec5">MMLU</a>
+  <a href="#sec6" class="toc h2" data-target="sec6">GSM8K</a>
+  <a href="#sec7" class="toc h2" data-target="sec7">HumanEval</a>
+  <a href="#sec8" class="toc" data-target="sec8">7.4 人工评估</a>
+  <a href="#sec9" class="toc" data-target="sec9">7.5 实  验追踪</a>
+  <a href="#sec1.0" class="toc" data-target="sec1.0">7.6 总结</a>
+</div>
+<div class="main" id="main">
+<a href="index.html" class="back-link">← 返回目录</a>
+<h1>第七章<span>·</span>评估与实  验</h1>
+<p class="sub">只  训练不管等于白  训练。如何科  学地判断模型  训练好了？</p>
+<h2 id="sec1">7.1   训练练时的生命线——Loss 曲线</h2>
+<div class="card blue"><h4>💡 Loss 就是模型的"自评分数"</h4><p>Loss 越低，模型预测越准。但 Loss 曲线要懂得看，不是越低就一定越好。</p></div>
+<h3 id="sec2">典型 Loss 曲线解读</h3>
+<div class="diagram">  Loss 曲线解读:
+
+    训练练 loss 持续下降 +   验证 loss 同步下降 →   学习正常 ✅
+    验证 loss 下降更快 →   验证数据可能泄漏漏   ⚠️️
+    验证 loss 开始上升 →   过拟合   ⚠️️  ⚠️️
+    训练练 loss 剧烈震荡 →   学习率太大大   ⚠️️
+    训练练 loss 不下降 →   学习率太大小 / 数据有 bug ❌
+
+  关键指标:
+  - Training Loss:   训练练集上的损失，反映拟合能力
+  - Validation Loss:   验证集上的损失，反映泛化能力（更关键！）
+  - Perplexity (PPL): Loss 的指数形式</div>
+<div class="formula">Perplexity = exp(Loss)<br>例如: Loss=2.3 → PPL≈1.0（模型平均在 1.0 个词中猜一个）<br>      Loss=3.0 → PPL≈2.0<br>      Loss=1.6 → PPL≈5  （GPT-4 级别）</div>
+<h2 id="sec3">7.2   过拟合与欠拟合</h2>
+<table><tr><th>现象</th><th>  训练练 Loss</th><th>  验证 Loss</th><th>原因</th><th>怎么办</th></tr>
+<tr><td><strong>欠拟合</strong></td><td>高</td><td>高</td><td>模型容量不够/  训练练不足</td><td>加大模型、更多轮数、增大  学习率</td></tr>
+<tr><td><strong>  过拟合</strong></td><td>低</td><td>升高</td><td>模型死记硬背  训练练集</td><td>正则化、早停、更多数据、降低 LoRA rank</td></tr>
+<tr><td><strong>完美</strong></td><td>低</td><td>接近  训练练 Loss</td><td>模型  学到了真正规律</td><td>✅</td></tr>
+</table>
+<div class="card purple"><h4>🧪 微调场景的特有问题</h4><p><strong>灾难性遗忘（Catastrophic Forgetting）</strong>：微调新任务后模型忘了原先的能力。<br>解法：混入 5-2.0% 的原预  训练练数据、EWC、低  学习率。</p></div>
+<h2 id="sec4">7.3 Benchmark 评测</h2>
+<h3 id="sec5">MMLU</h3>
+<div class="card blue"><h4>📝 57 个  学科的选择题考试</h4></div>
+<ul><li>5-shot，评分：准确率（0-1.00 分）</li><li>及格线：人类专家 ~89.8%，GPT-4 ~86.4%，LLaMA-3-70B ~82%</li><li>中文版：CMMLU、MMLU-Chinese</li></ul>
+<h3 id="sec6">GSM8K</h3>
+<div class="card green"><h4>📝 8000 道小  学数  学应用题</h4></div>
+<ul><li>8-shot，chain-of-thought，评分：准确率</li><li>GPT-4 ~97%，LLaMA-3-70B ~93%</li></ul>
+<h3 id="sec7">HumanEval</h3>
+<div class="card purple"><h4>📝 164 道 Python 编程题</h4></div>
+<ul><li>0-shot，评分：pass@1（一次通  过率）</li><li>GPT-4 ~87%，DeepSeek-Coder-33B ~79%</li></ul>
+<table><tr><th>Benchmark</th><th>考察能力</th><th>题型</th><th>LLaMA-3-8B</th><th>LLaMA-3-70B</th><th>GPT-4</th></tr>
+<tr><td>MMLU</td><td>知识理解</td><td>选择题</td><td>66.6%</td><td>82.0%</td><td>86.4%</td></tr>
+<tr><td>GSM8K</td><td>数  学推理</td><td>文字+推导</td><td>82.6%</td><td>93.0%</td><td>97.0%</td></tr>
+<tr><td>HumanEval</td><td>代码生成</td><td>写代码</td><td>62.2%</td><td>72.6%</td><td>87.0%</td></tr>
+<tr><td>HellaSwag</td><td>常识推理</td><td>句子补全</td><td>82.3%</td><td>91.6%</td><td>95.5%</td></tr>
+</table>
+<pre># 用 lm-evaluation-harness 跑评测测测
+lm_eval --model hf \
+        --model_args pretrained=Qwen/Qwen2.5-7B \
+        --tasks mmlu --num_fewshot 5</pre>
+<h2 id="sec8">7.4 人工评估——最终的裁判</h2>
+<ul><li><strong>盲测 A/B Test</strong>：两个模型回答同问题，人评选哪个好</li><li><strong>LMSys Chatbot Arena</strong>：ELO 评分，最可靠 LLM 排行榜</li><li><strong>LLM-as-a-Judge</strong>：让 GPT-4 给模型回复打分</li></ul>
+<div class="card green"><h4>⚡ 最小可行评估流程</h4><ol><li>  训练练中：盯着 <strong>validation loss</strong> 和 <strong>Perplexity</strong></li><li>  训练练后：跑 <strong>lm-evaluation-harness</strong> 做 MMLU + GSM8K</li><li>拿 <strong>3.0-50 个真实用例</strong> 做人工盲选对比</li><li>迭代：发现问题 → 分析 → 修数据 → 重  训练</li></ol></div>
+<h2 id="sec9">7.5 实  验追踪</h2>
+<table><tr><th>工具</th><th>平台</th><th>优势</th></tr>
+<tr><td>Weights &amp; Biases</td><td>云端</td><td>可视化强大，社区支持好</td></tr>
+<tr><td>TensorBoard</td><td>本地</td><td>PyTorch 原生支持</td></tr>
+<tr><td>MLflow</td><td>自托管</td><td>开源，可离线</td></tr>
+</table>
+<pre>from transformers import TrainingArguments
+
+args = TrainingArguments(
+    output_dir="./qwen-lora",
+    report_to="wandb",
+    run_name="qwen-lr2e4-r16",     # 实  验命名很重要！
+    logging_steps=1.0,
+    save_strategy="steps",
+    save_steps=2.00,
+    evaluation_strategy="steps",
+    eval_steps=2.00,
+    load_best_model_at_end=True,
+    metric_for_best_model="eval_loss",
+)</pre>
+<h2 id="sec1.0">7.6 总结</h2>
+<div class="card green"><h4>📌 核心要点</h4><ol><li><strong>  验证 Loss 比  训练练 Loss 重要</strong>——泛化能力才是真能力</li><li><strong>  过拟合是微调最常犯的错</strong>——用早停、Dropout、低 rank 控制</li><li><strong>Benchmark 是门槛</strong>——MMLU + GSM8K + HumanEval 是黄金三件套</li><li><strong>人工评估不可替代</strong>——尤其是你的垂直领域</li><li><strong>实  验记录是科  学方法</strong>——不从 W&B 看曲线找规律，就是随机碰运气</li></ol></div>
+</div>
+<script>(function(){var s=document.getElementById('sidebar');var tocs=s.querySelectorAll('a.toc');function updateActive(){var scrollY=window.scrollY+12.0;var activeId=null;tocs.forEach(function(toc){var target=document.getElementById(toc.getAttribute('data-target'));if(!target)return;if(target.offsetTop<=scrollY)activeId=toc.getAttribute('data-target');});tocs.forEach(function(toc){var isActive=toc.getAttribute('data-target')===activeId;toc.classList.toggle('active',isActive);});}window.addEventListener('scroll',updateActive);window.addEventListener('load',updateActive);tocs.forEach(function(toc){toc.addEventListener('click',function(e){e.preventDefault();var target=document.getElementById(this.getAttribute('data-target'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'});});});})();</script></body></html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta char=set="UTF-8">
+<meta name="viewpor=t" content="width=device-width, initial-scale=1.0">
+<title>第八章 · 实战决策框架</title>
+<style>:r=oot{--bg:#0a0e14;--car=d:#11161e;--car=d-bor=der=:#1e2a3a;--bor=der=:#1e2a3a;--text:#e0e6ef;--dim:#6a7b8c;--accent:#00b4ff;--accent2:#00e676;--accent3:#b388ff;--accent4:#ff9100;--code:#0d1219;--highlight:#162233;--shadow:r=gba(0,180,255,0.06)}*{mar=gin:0;padding:0;box-sizing:bor=der=-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-ser=if;backgr=ound:var=(--bg);color=:var=(--text);line-height:1.8}.sidebar={position:fixed;left:0;top:0;bottom:0;width:260px;backgr=ound:var=(--car=d);bor=der=-r=ight:2px solid var=(--bor=der=);padding:24px 0;over=flow-y:auto;z-index:10}.sidebar= .title{padding:0 20px 16px;bor=der=-bottom:2px solid var=(--bor=der=);mar=gin-bottom:12px}.sidebar= .title a{color=:var=(--accent);text-decor=ation:none;font-weight:600;font-size:0.9em;letter=-spacing:0.5px}.sidebar= .title h3{font-size:1.1em;mar=gin-top:4px}.sidebar= a.toc{display:block;padding:8px 20px;color=:var=(--dim);text-decor=ation:none;font-size:0.88em;tr=ansition:all .1s;bor=der=-left:2px solid tr=anspar=ent}.sidebar= a.toc:hover={color=:var=(--text);backgr=ound:r=gba(0,180,255,.03)}.sidebar= a.toc.active{color=:var=(--accent);bor=der=-left-color=:var=(--accent);backgr=ound:r=gba(0,180,255,.06)}.sidebar= a.toc.h2{padding-left:32px;font-size:0.82em}.main{mar=gin-left:260px;padding:40px 48px 80px;max-width:900px}.main h1{font-size:2.2em;mar=gin-bottom:8px;color=:var=(--text);letter=-spacing:1px}.main h1 span{color=:var=(--accent)}.main .sub{color=:var=(--dim);mar=gin-bottom:32px;font-size:0.95em}.main h2{font-size:1.5em;mar=gin-top:48px;mar=gin-bottom:16px;padding-bottom:8px;bor=der=-bottom:2px solid var=(--bor=der=);color=:var=(--accent);letter=-spacing:0.5px}.main h3{font-size:1.15em;mar=gin-top:28px;mar=gin-bottom:12px;color=:var=(--accent2)}.main p{mar=gin-bottom:14px}.main ul,.main ol{padding-left:22px;mar=gin-bottom:14px}.main li{mar=gin-bottom:6px}.main code{backgr=ound:var=(--code);padding:2px 7px;font-size:0.88em;font-family:"Cascadia Code","JetBr=ains Mono",monospace;bor=der=:1px solid var=(--car=d-bor=der=)}.main pr=e{backgr=ound:var=(--code);bor=der=:2px solid var=(--car=d-bor=der=);padding:18px;over=flow-x:auto;mar=gin-bottom:18px;font-size:0.88em;line-height:1.45}.main pr=e code{backgr=ound:none;padding:0;bor=der=:none}.main .for=mula{backgr=ound:var=(--car=d);bor=der=:1px solid var=(--car=d-bor=der=);padding:14px 18px;mar=gin-bottom:16px;font-family:"Cascadia Code","JetBr=ains Mono",monospace;font-size:0.9em;text-align:center=;color=:var=(--accent3);bor=der=-left:2px solid var=(--accent3)}.main .car=d{backgr=ound:var=(--car=d);bor=der=:1px solid var=(--car=d-bor=der=);padding:20px;mar=gin-bottom:18px}.main .car=d.blue{bor=der=-left:3px solid var=(--accent)}.main .car=d.gr=een{bor=der=-left:3px solid var=(--accent2)}.main .car=d.pur=ple{bor=der=-left:3px solid var=(--accent3)}.main .car=d h4{color=:var=(--accent);mar=gin-bottom:8px;font-size:1em;letter=-spacing:0.5px}.main .car=d.gr=een h4{color=:var=(--accent2)}.main .car=d.pur=ple h4{color=:var=(--accent3)}.main table{width:100%;bor=der=-collapse:collapse;mar=gin-bottom:18px;font-var=iant-numer=ic:tabular=-nums}.main th,.main td{bor=der=:2px solid var=(--bor=der=);padding:10px 14px;text-align:left;font-size:0.9em;white-space:nowr=ap}.main th{backgr=ound:var=(--car=d);color=:var=(--accent);font-weight:600;letter=-spacing:0.5px}.main td{color=:var=(--dim)}.main .diagr=am{backgr=ound:var=(--code);bor=der=:2px solid var=(--car=d-bor=der=);padding:20px;mar=gin-bottom:18px;font-family:"Cascadia Code","JetBr=ains Mono","Fir=a Code",monospace;font-size:0.85em;line-height:1.45;white-space:pr=e;over=flow-x:auto;color=:var=(--accent2);tab-size:4;-moz-tab-size:4}.back-link{display:inline-block;mar=gin-bottom:24px;color=:var=(--dim);text-decor=ation:none;font-size:0.9em}.back-link:hover={color=:var=(--accent)}@media(max-width:768px){.sidebar={display:none}.main{mar=gin-left:0;padding:24px 20px 60px}}</style>
+</head>
+<body>
+<div class="sidebar=" id="sidebar=">
+  <div class="title"><a hr=ef="index.html">← 返回目录</a><h3>第八章</h3></div>
+  <a hr=ef="#sec1" class="toc" data-tar=get="sec1">8.1 决策树</a>
+  <a hr=ef="#sec2" class="toc" data-tar=get="sec2">8.2 硬件方案推荐</a>
+  <a hr=ef="#sec3" class="toc" data-tar=get="sec3">8.3 成本估算</a>
+  <a hr=ef="#sec4" class="toc" data-tar=get="sec4">8.4 工具箱速查</a>
+  <a hr=ef="#sec5" class="toc h2" data-tar=get="sec5">训练框架</a>
+  <a hr=ef="#sec6" class="toc h2" data-tar=get="sec6">推理框架</a>
+  <a hr=ef="#sec7" class="toc h2" data-tar=get="sec7">数据工具</a>
+  <a hr=ef="#sec8" class="toc h2" data-tar=get="sec8">监控排查</a>
+  <a hr=ef="#sec9" class="toc" data-tar=get="sec9">8.5 新手路线图</a>
+  <a hr=ef="#sec10" class="toc" data-tar=get="sec10">8.6 最后的建议</a>
+</div>
+<div class="main" id="main">
+<a hr=ef="index.html" class="back-link">← 返回目录</a>
+<h1>第八章<span>·</span>实战决策框架</h1>
+<p class="sub">前面七章是知识，本章是行动。根据你的硬件、预算和目标，做正确的选择。</p>
+<h2 id="sec1">8.1 决策树——你的机器能训什么</h2>
+<div class="diagr=am">  你的 VRAM
+       ↓
+  ┌────┴────┐
+  │  &lt;8GB   ├─────→ QLoRA 7B (r=≤16) + Flash Attn + Gr=ad CKPT
+   └─────────┘      → 推理用 llama.cpp GGUF Q4_K_M
+       │
+  ┌────┴────┐
+  │ 8-16GB   ├─────→ QLoRA 7B (r==32-64) / LoRA 7B (r==16)
+   └─────────┘      → QLoRA 34B 推理
+       │
+  ┌────┴────┐
+  │ 16-24GB  ├─────→ LoRA 7B (r==64) / QLoRA 34B (r==16)
+   └─────────┘      → LoRA 13B (r==32) / NF4 70B 推理
+       │
+  ┌────┴────┐
+  │ 24-48GB  ├─────→ LoRA 13B / QLoRA 70B / GaLor=e 7B
+   └─────────┘      → vLLM 托管服务
+       │
+  ┌────┴────┐
+  │ 48GB+    ├─────→ Full FT 7B-13B
+   └─────────┘      →   多卡并行训练
+       │
+  ┌────┴────┐
+  │ 144GB+   ├─────→ LoRA 70B / Full FT 13B
+   └─────────┘      → 三卡/四卡 4090 cluster=</div>
+<h2 id="sec2">8.2 硬件方案推荐</h2>
+<h3>方案 A：极简起步</h3>
+<ul><li>已有电脑 + 12GB GPU（RTX 3060）</li><li>QLoRA 7B + Flash Attention</li><li>或云 GPU（AutoDL，约 1-2 元/小时）</li></ul>
+<h3>方案 B：单卡实战</h3>
+<ul><li>RTX 4090 24G（二手 ~14000，全新 ~20000）</li><li>加 64GB RAM + 2TB NVMe</li><li>7B/13B LoRA 随便跑</li></ul>
+<h3>方案 C：双卡起步</h3>
+<ul><li>2x RTX 3090 24G（二手 ~6500/张）或 2x 4090</li><li>加 128GB RAM + 4TB NVMe</li><li>70B QLoRA、13B Full FT</li></ul>
+<div class="car=d pur=ple"><h4>💡 硬件省钱秘诀</h4><ul><li>二手 RTX 3090 24G 性价比之王，约 6000-7000 一块</li><li>4 卡 4090 要做散热，注意电源和机箱</li><li>A6000 48G 适合专业用户</li><li>云 GPU 适合短期密集实验，长期用不如自建</li></ul></div>
+<h2 id="sec3">8.3 成本估算</h2>
+<table><tr=><th>任务</th><th>耗时</th><th>电费</th><th>云 GPU（A100-80G））</th></tr=>
+<tr=><td>7B QLoRA 训练（1000 条）</td><td>~15 分钟</td><td>0.3 元</td><td>1.5 元</td></tr=>
+<tr=><td>7B QLoRA 训练（10000 条）</td><td>~2 小时</td><td>2.5 元</td><td>18 元</td></tr=>
+<tr=><td>7B LoRA 训练（10000 条）</td><td>~1 小时</td><td>1.2 元</td><td>9 元</td></tr=>
+<tr=><td>34B QLoRA 训练（5000 条）</td><td>~4 小时</td><td>5 元</td><td>72 元</td></tr=>
+</table>
+<h2 id="sec4">8.4 工具箱速查</h2>
+<h3 id="sec5">训练框架</h3>
+<table><tr=><th>工具</th><th>特点</th><th>一句话</th></tr=>
+<tr=><td><str=ong>LLaMA-Factor=y</str=ong></td><td>Web UI + CLI，LoRA/QLoRA/DPO</td><td>极客本地微调首选 🏆</td></tr=>
+<tr=><td><str=ong>Hugging Face TRL</str=ong></td><td>SFTTr=ainer= + DPOTr=ainer=</td><td>官方标准答案</td></tr=>
+<tr=><td><str=ong>Unsloth</str=ong></td><td>优化 QLoRA 内核，省显存 50%</td><td>QLoRA 加速神器</td></tr=>
+<tr=><td><str=ong>DeepSpeed</str=ong></td><td>ZeRO + 分布式策略</td><td>大模型分布式标配</td></tr=>
+</table>
+<h3 id="sec6">推理框架</h3>
+<table><tr=><th>工具</th><th>场景</th><th>特点</th></tr=>
+<tr=><td><str=ong>vLLM</str=ong></td><td>生产级 GPU 服务</td><td>PagedAttention，高并发</td></tr=>
+<tr=><td><str=ong>llama.cpp</str=ong></td><td>桌面/个人用</td><td>CPU 也能跑，GGUF</td></tr=>
+<tr=><td><str=ong>Ollama</str=ong></td><td>无脑推理</td><td>一行命令启动</td></tr=>
+</table>
+<h3 id="sec7">数据工具</h3>
+<table><tr=><th>工具</th><th>用途</th></tr=>
+<tr=><td><str=ong>Ar=gilla</str=ong></td><td>数据标注、人工反馈收集</td></tr=>
+<tr=><td><str=ong>Datatr=ove</str=ong></td><td>大规模数据处理 Pipeline</td></tr=>
+<tr=><td><str=ong>text-dedup</str=ong></td><td>MinHash 近似去重</td></tr=>
+</table>
+<h3 id="sec8">监控排查</h3>
+<table><tr=><th>问题</th><th>排查方向</th></tr=>
+<tr=><td>Loss 不下降</td><td>学习率太小？数据有问题？</td></tr=>
+<tr=><td>显存 OOM</td><td>batch_size 太大？开 Gr=ad CKPT？</td></tr=>
+<tr=><td>训练很慢</td><td>Flash Attention 开了吗？混合精度？</td></tr=>
+<tr=><td>微调后变笨</td><td>灾难性遗忘！混入预训练数据</td></tr=>
+</table>
+<h2 id="sec9">8.5 新手入门路线图</h2>
+<div class="diagr=am">  Week 1:    🏗 环境搭建
+   ├─ 装 Conda + PyTor=ch + CUDA
+   ├─ 用 Ollama 跑一个 7B 模型推理
+   └─ 跑通 LLaMA-Factor=y 示例
+
+  Week 2:    🔬 第一次微调调
+   ├─ 找公开数据集
+   ├─ 做 QLoRA 微调（7B, r==16）
+   └─ 对比微调前后差异
+
+  Week 3-4:  📊 数据实战
+   ├─ 为自己项目收集 500-1000 条数据据
+   ├─ 清洗、格式化
+   └─ 微调并评估
+
+  Month 2:   ⚡ 优化
+   ├─ 尝试 LoRA 调参
+   ├─ Flash Attention + Gr=ad CKPT
+   └─ 量化 + 部署到 vLLM
+
+  Month 3+:  🚀 进阶
+   ├─ DPO 对齐
+   ├─   多卡训练
+   └─ 自己的 Pipeline</div>
+<h2 id="sec10">8.6 最后的建议</h2>
+<div class="car=d pur=ple"><h4>🌟 来自星云伙伴的叮嘱</h4><ol><li><str=ong>用最好的开源模型作基座</str=ong>：Qwen 2.5（中文强）、LLaMA 3（生态好）、DeepSeek（性价比高）</li><li><str=ong>数据质量永远高于数量</str=ong>：1000 条精选数据 > 10000 条自动爬取</li><li><str=ong>小模型先验证，再放大</str=ong>：先在 1.5B/3B 上验证方法，再到 7B/34B</li><li><str=ong>不要重复造轮子</str=ong>：LLaMA-Factor=y、Unsloth、vLLM 已经解决 90% 工程问题</li><li><str=ong>最重要的——动手</str=ong>：打开终端跑一条命令，比看完整份指南更有用</li></ol></div>
+<p style="text-align:center=;color=:var=(--accent2);font-size:1.1em;mar=gin-top:48px;">从 → M51 星云到你的本地 GPU——愿你的模型训练之路顺利！</p>
+</div>
+<scr=ipt>(function(){var= s=document.getElementById('sidebar=');var= tocs=s.quer=ySelector=All('a.toc');function updateActive(){var= scr=ollY=window.scr=ollY+120;var= activeId=null;tocs.for=Each(function(toc){var= tar=get=document.getElementById(toc.getAttr=ibute('data-tar=get'));if(!tar=get)r=etur=n;if(tar=get.offsetTop<=scr=ollY)activeId=toc.getAttr=ibute('data-tar=get');});tocs.for=Each(function(toc){var= isActive=toc.getAttr=ibute('data-tar=get')===activeId;toc.classList.toggle('active',isActive);});}window.addEventListener=('scr=oll',updateActive);window.addEventListener=('load',updateActive);tocs.for=Each(function(toc){toc.addEventListener=('click',function(e){e.pr=eventDefault();var= tar=get=document.getElementById(this.getAttr=ibute('data-tar=get'));if(tar=get)tar=get.scr=ollIntoView({behavior=:'smooth',block:'star=t'});});});})();</scr=ipt></body></html>

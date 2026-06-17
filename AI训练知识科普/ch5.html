@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五章 · 微调与高效训练</title>
+<style>:root{--bg:#0a0e14;--card:#11161e;--card-border:#1e2a3a;--border:#1e2a3a;--text:#e0e6ef;--dim:#6a7b8c;--accent:#00b4ff;--accent2:#00e676;--accent3:#b388ff;--accent4:#ff9100;--code:#0d1219;--highlight:#162233;--shadow:rgba(0,180,255,0.06)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.8}.sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--card);border-right:2px solid var(--border);padding:24px 0;overflow-y:auto;z-index:10}.sidebar .title{padding:0 20px 16px;border-bottom:2px solid var(--border);margin-bottom:12px}.sidebar .title a{color:var(--accent);text-decoration:none;font-weight:600;font-size:0.9em;letter-spacing:0.5px}.sidebar .title h3{font-size:1.1em;margin-top:4px}.sidebar a.toc{display:block;padding:8px 20px;color:var(--dim);text-decoration:none;font-size:0.88em;transition:all .1s;border-left:2px solid transparent}.sidebar a.toc:hover{color:var(--text);background:rgba(0,180,255,.03)}.sidebar a.toc.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,180,255,.06)}.sidebar a.toc.h2{padding-left:32px;font-size:0.82em}.main{margin-left:260px;padding:40px 48px 80px;max-width:900px}.main h1{font-size:2.2em;margin-bottom:8px;color:var(--text);letter-spacing:1px}.main h1 span{color:var(--accent)}.main .sub{color:var(--dim);margin-bottom:32px;font-size:0.95em}.main h2{font-size:1.5em;margin-top:48px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border);color:var(--accent);letter-spacing:0.5px}.main h3{font-size:1.15em;margin-top:28px;margin-bottom:12px;color:var(--accent2)}.main p{margin-bottom:14px}.main ul,.main ol{padding-left:22px;margin-bottom:14px}.main li{margin-bottom:6px}.main code{background:var(--code);padding:2px 7px;font-size:0.88em;font-family:"Cascadia Code","JetBrains Mono",monospace;border:1px solid var(--card-border)}.main pre{background:var(--code);border:2px solid var(--card-border);padding:18px;overflow-x:auto;margin-bottom:18px;font-size:0.88em;line-height:1.45}.main pre code{background:none;padding:0;border:none}.main .formula{background:var(--card);border:1px solid var(--card-border);padding:14px 18px;margin-bottom:16px;font-family:"Cascadia Code","JetBrains Mono",monospace;font-size:0.9em;text-align:center;color:var(--accent3);border-left:2px solid var(--accent3)}.main .card{background:var(--card);border:1px solid var(--card-border);padding:20px;margin-bottom:18px}.main .card.blue{border-left:3px solid var(--accent)}.main .card.green{border-left:3px solid var(--accent2)}.main .card.purple{border-left:3px solid var(--accent3)}.main .card h4{color:var(--accent);margin-bottom:8px;font-size:1em;letter-spacing:0.5px}.main .card.green h4{color:var(--accent2)}.main .card.purple h4{color:var(--accent3)}.main table{width:100%;border-collapse:collapse;margin-bottom:18px;font-variant-numeric:tabular-nums}.main th,.main td{border:2px solid var(--border);padding:10px 14px;text-align:left;font-size:0.9em;white-space:nowrap}.main th{background:var(--card);color:var(--accent);font-weight:600;letter-spacing:0.5px}.main td{color:var(--dim)}.main .diagram{background:var(--code);border:2px solid var(--card-border);padding:20px;margin-bottom:18px;font-family:"Cascadia Code","JetBrains Mono","Fira Code",monospace;font-size:0.85em;line-height:1.45;white-space:pre;overflow-x:auto;color:var(--accent2);tab-size:4;-moz-tab-size:4}.back-link{display:inline-block;margin-bottom:24px;color:var(--dim);text-decoration:none;font-size:0.9em}.back-link:hover{color:var(--accent)}@media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:24px 20px 60px}}</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="title"><a href="index.html">← 返回目录</a><h3>第五章</h3></div>
+  <a href="#sec1" class="toc" data-target="sec1">5.1 Full Fine-Tuning vs LoRA</a>
+  <a href="#sec2" class="toc h2" data-target="sec2">5.2 LoRA 详解</a>
+  <a href="#sec3" class="toc h2" data-target="sec3">5.3 QLoRA</a>
+  <a href="#sec4" class="toc h2" data-target="sec4">5.4 GaLore</a>
+  <a href="#sec5" class="toc" data-target="sec5">5.5 模型量化</a>
+  <a href="#sec6" class="toc" data-target="sec6">5.6 训练优化技巧</a>
+  <a href="#sec7" class="toc" data-target="sec7">5.7 实践建议</a>
+</div>
+<div class="main" id="main">
+<a href="index.html" class="back-link">← 返回目录</a>
+<h1>第五章<span>·</span>微调与高效训练</h1>
+<p class="sub">关键一章——教你在消费级 GPU 上训大模型的所有技巧。</p>
+<h2 id="sec1">5.1 Full Fine-Tuning vs LoRA</h2>
+<p>微调是把预训练好的模型在特定任务上做进一步训练。但不是一定要更新所有参数。</p>
+<table><tr><th></th><th>Full Fine-Tuning</th><th>LoRA</th></tr>
+<tr><td>更新参数量</td><td>100%（7B → 全部 7B 参数）</td><td>~0.1-1%（~7M-70M）</td></tr>
+<tr><td>显存需求（7B）</td><td>~56 GB（FP16）</td><td>~16 GB（FP16）</td></tr>
+<tr><td>训练速度</td><td>慢（全参数梯度计算）</td><td>快 ~2-3x</td></tr>
+<tr><td>效果</td><td>上限高（完全适应新任务）</td><td>接近 Full FT（低损失）</td></tr>
+</table>
+<h2 id="sec2">5.2 LoRA 详解</h2>
+<p>LoRA（Low-Rank Adaptation）：不直接修改原始权重 W，而是在 W 旁插入一个<strong>低秩分解</strong>的更新矩阵。</p>
+<div class="diagram">  W_new = W_original + ΔW
+                           ┌────┐
+  ΔW ≈ A · B              │  A  │  (d×r)
+              W_original   │     │  r &lt;&lt; d, 通常 r=8~64
+              ┌────────┐   │     │
+              │  W×x   │   │  B  │  (r×k)
+              └────────┘   └────┘
+                 +               = W_new×x
+              (A·B)·x</div>
+<p>LoRA 的核心洞察：模型权重的"更新量"（ΔW）具有<strong>低秩</strong>特性，可以用两个小矩阵 A (d×r) 和 B (r×k) 来近似表示。</p>
+<pre>from peft import LoraConfig, get_peft_model
+
+lora_config = LoraConfig(
+    r=16,               # 秩——越大越强也越贵
+    lora_alpha=32,      # 缩放系数
+    target_modules=["q_proj", "v_proj"],  # 只微调 Attention 的 Q 和 V
+    lora_dropout=0.05,  # Dropout 防过拟合
+)
+model = get_peft_model(base_model, lora_config)
+# 现在 model 可训练参数只有原来的 ~0.1%！</pre>
+<div class="card purple"><h4>🔑 关键超参数</h4><p><strong>r（rank）</strong>：r 越大，ΔW 表达能力越强，但参数量和显存也更大。<br>r=8（轻量，适合简单任务），r=16（均衡，推荐），r=64（强力，适合困难任务）<br><strong>target_modules</strong>：哪些层加 LoRA。q_proj+v_proj（最常见，效果已很好），加 o_proj+gate_proj+up_proj+down_proj（更强但更耗显存）</p></div>
+<h2 id="sec3">5.3 QLoRA——量化 + LoRA</h2>
+<p>QLoRA = 4-bit 量化（NF4）+ LoRA。把基座模型量化到 4-bit，LoRA 部分保持 FP16。</p>
+<div class="diagram">  显存分布对比（7B 模型，单卡训练）:
+
+  全量微调:
+  ┌──────────────────────────────────────────┐
+  │ Model (FP16) 14G | Grad 14G | Opt 28G   │  ≈ 56 GB ❌
+  └──────────────────────────────────────────┘
+
+  LoRA (FP16):
+  ┌──────────────────────────────────────┐
+  │ Model (FP16) 14G | LoRA+Opt ~3G      │  ≈ 17 GB ✅
+  └──────────────────────────────────────┘
+
+  QLoRA (4-bit NF4):
+  ┌──────────────────────────────────────┐
+  │ Model (NF4) 4G   | LoRA+Opt ~2G      │  ≈ 6 GB  🎉
+  └──────────────────────────────────────┘</div>
+<pre># QLoRA 在 LLaMA-Factory 中的配置
+# dataset: my_data.json
+# finetuning_type: lora
+# quantization_bit: 4       ← 4-bit 量化！
+# quantization_type: nf4    ← 4-bit NormalFloat
+
+# 或者在 Transformers 中
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3-8B",
+    load_in_4bit=True,          # 4-bit 量化加载
+    bnb_4bit_quant_type="nf4",  # NF4 数据类型
+    bnb_4bit_use_double_quant=True,  # 双重量化再省 0.5GB
+)</pre>
+<h2 id="sec4">5.4 GaLore——梯度低秩投影</h2>
+<p>GaLore（Gradient Low-Rank Projection）是一种更激进的内存节省方法。它不是在权重上加 LoRA，而是<strong>在训练过程中将梯度投影到低秩空间</strong>，减少优化器状态的显存。</p>
+<ul><li>✅ 可以 <strong>全量微调</strong>（只改变训练方式，不改模型结构）</li><li>✅ 省优化器状态显存（Adam 优化器状态 ~28G → ~2G for 7B）</li><li>✅ 最终模型 = 完整模型（不是 LoRA 那种需要合并的 adaptor）</li><li>⚠️ 比 LoRA 慢一点（需要额外投影计算）</li></ul>
+<h2 id="sec5">5.5 模型量化</h2>
+<p>量化是把模型从高精度（FP16）映射到低精度（INT8/INT4），减小模型体积和加速推理。</p>
+<table><tr><th>方法</th><th>精度</th><th>显存省</th><th>适用场景</th></tr>
+<tr><td>GPTQ</td><td>4-bit / 3-bit / 2-bit</td><td>~4x</td><td>GPU 推理（需要校准集）</td></tr>
+<tr><td>AWQ</td><td>4-bit</td><td>~4x</td><td>GPU 推理（比 GPTQ 快）</td></tr>
+<tr><td>GGUF (llama.cpp)</td><td>Q2~Q8 多种</td><td>~4-6x</td><td>CPU/混合推理，消费级硬件</td></tr>
+<tr><td>BitsAndBytes (NF4)</td><td>4-bit NF4</td><td>~4x</td><td>QLoRA 训练 / 推理</td></tr>
+</table>
+<h2 id="sec6">5.6 训练优化技巧</h2>
+<h3>Flash Attention</h3>
+<p>Flash Attention 是一种<strong>精确的 Attention 算法加速</strong>，不牺牲精度。</p>
+<ul><li>✅ 训练速度 2-3x 加速</li><li>✅ 显存从 O(n²) 降到 O(n)（长序列尤其明显）</li><li>✅ 精确计算——结果和标准 Attention 完全一致</li></ul>
+<h3>Gradient Checkpointing</h3>
+<p>训练时<strong>不保存中间激活值</strong>，反向传播时重新计算。</p>
+<ul><li>✅ 显存省 ~50%（但慢了 ~20%）</li><li>✅ 在显存不够时是救命稻草</li></ul>
+<h2 id="sec7">5.7 实践建议</h2>
+<div class="card green"><h4>📌 实战清单</h4><ol><li><strong>QLoRA + r=16 + target_modules=q_proj,v_proj</strong> 是性价比最高的起点</li><li>数据量少（&lt;500 条）用 r=8，数据量多（10000+）用 r=32+</li><li>无论如何开 <strong>Flash Attention</strong> 和 <strong>Gradient Checkpointing</strong></li><li>7B 用 QLoRA 单张 24GB 卡足够，34B 用 QLoRA 需要 24GB</li></ol></div>
+<p style="color:var(--dim);margin-top:40px;">模型训好了，下一章看看怎么让它推理更快。</p>
+</div>
+<script>(function(){var s=document.getElementById('sidebar');var tocs=s.querySelectorAll('a.toc');function updateActive(){var scrollY=window.scrollY+120;var activeId=null;tocs.forEach(function(toc){var target=document.getElementById(toc.getAttribute('data-target'));if(!target)return;if(target.offsetTop<=scrollY)activeId=toc.getAttribute('data-target');});tocs.forEach(function(toc){var isActive=toc.getAttribute('data-target')===activeId;toc.classList.toggle('active',isActive);});}window.addEventListener('scroll',updateActive);window.addEventListener('load',updateActive);tocs.forEach(function(toc){toc.addEventListener('click',function(e){e.preventDefault();var target=document.getElementById(this.getAttribute('data-target'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'});});});})();</script></body></html>

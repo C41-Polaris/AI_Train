@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第四章 · 分布式训练策略</title>
+<style>:root{--bg:#0a0e14;--card:#11161e;--card-border:#1e2a3a;--border:#1e2a3a;--text:#e0e6ef;--dim:#6a7b8c;--accent:#00b4ff;--accent2:#00e676;--accent3:#b388ff;--accent4:#ff9100;--code:#0d1219;--highlight:#162233;--shadow:rgba(0,180,255,0.06)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.8}.sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--card);border-right:2px solid var(--border);padding:24px 0;overflow-y:auto;z-index:10}.sidebar .title{padding:0 20px 16px;border-bottom:2px solid var(--border);margin-bottom:12px}.sidebar .title a{color:var(--accent);text-decoration:none;font-weight:600;font-size:0.9em;letter-spacing:0.5px}.sidebar .title h3{font-size:1.1em;margin-top:4px}.sidebar a.toc{display:block;padding:8px 20px;color:var(--dim);text-decoration:none;font-size:0.88em;transition:all .1s;border-left:2px solid transparent}.sidebar a.toc:hover{color:var(--text);background:rgba(0,180,255,.03)}.sidebar a.toc.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,180,255,.06)}.sidebar a.toc.h2{padding-left:32px;font-size:0.82em}.main{margin-left:260px;padding:40px 48px 80px;max-width:900px}.main h1{font-size:2.2em;margin-bottom:8px;color:var(--text);letter-spacing:1px}.main h1 span{color:var(--accent)}.main .sub{color:var(--dim);margin-bottom:32px;font-size:0.95em}.main h2{font-size:1.5em;margin-top:48px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border);color:var(--accent);letter-spacing:0.5px}.main h3{font-size:1.15em;margin-top:28px;margin-bottom:12px;color:var(--accent2)}.main p{margin-bottom:14px}.main ul,.main ol{padding-left:22px;margin-bottom:14px}.main li{margin-bottom:6px}.main code{background:var(--code);padding:2px 7px;font-size:0.88em;font-family:"Cascadia Code","JetBrains Mono",monospace;border:1px solid var(--card-border)}.main pre{background:var(--code);border:2px solid var(--card-border);padding:18px;overflow-x:auto;margin-bottom:18px;font-size:0.88em;line-height:1.45}.main pre code{background:none;padding:0;border:none}.main .formula{background:var(--card);border:1px solid var(--card-border);padding:14px 18px;margin-bottom:16px;font-family:"Cascadia Code","JetBrains Mono",monospace;font-size:0.9em;text-align:center;color:var(--accent3);border-left:2px solid var(--accent3)}.main .card{background:var(--card);border:1px solid var(--card-border);padding:20px;margin-bottom:18px}.main .card.blue{border-left:3px solid var(--accent)}.main .card.green{border-left:3px solid var(--accent2)}.main .card.purple{border-left:3px solid var(--accent3)}.main .card h4{color:var(--accent);margin-bottom:8px;font-size:1em;letter-spacing:0.5px}.main .card.green h4{color:var(--accent2)}.main .card.purple h4{color:var(--accent3)}.main table{width:100%;border-collapse:collapse;margin-bottom:18px;font-variant-numeric:tabular-nums}.main th,.main td{border:2px solid var(--border);padding:10px 14px;text-align:left;font-size:0.9em;white-space:nowrap}.main th{background:var(--card);color:var(--accent);font-weight:600;letter-spacing:0.5px}.main td{color:var(--dim)}.main .diagram{background:var(--code);border:2px solid var(--card-border);padding:20px;margin-bottom:18px;font-family:"Cascadia Code","JetBrains Mono","Fira Code",monospace;font-size:0.85em;line-height:1.45;white-space:pre;overflow-x:auto;color:var(--accent2);tab-size:4;-moz-tab-size:4}.back-link{display:inline-block;margin-bottom:24px;color:var(--dim);text-decoration:none;font-size:0.9em}.back-link:hover{color:var(--accent)}@media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:24px 20px 60px}}</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="title"><a href="index.html">← 返回目录</a><h3>第四章</h3></div>
+  <a href="#sec1" class="toc" data-target="sec1">4.1 为什么需要分布式训练</a>
+  <a href="#sec2" class="toc" data-target="sec2">4.2 Data Parallelism</a>
+  <a href="#sec3" class="toc h2" data-target="sec3">4.3 DDP</a>
+  <a href="#sec4" class="toc h2" data-target="sec4">4.4 FSDP / ZeRO</a>
+  <a href="#sec5" class="toc" data-target="sec5">4.5 Tensor / Pipeline Parallelism</a>
+  <a href="#sec6" class="toc h2" data-target="sec6">4.6 混合精度训练</a>
+  <a href="#sec7" class="toc" data-target="sec7">4.7 总结</a>
+</div>
+<div class="main" id="main">
+<a href="index.html" class="back-link">← 返回目录</a>
+<h1>第四章<span>·</span>分布式训练策略</h1>
+<p class="sub">一张 GPU 不够？用十张、百张、千张。分布式训练的核心挑战和主流方案。</p>
+<h2 id="sec1">4.1 为什么需要分布式训练？</h2>
+<div class="card blue"><h4>💡 三个动机</h4><ol><li><strong>显存不够</strong>：70B 模型 FP16 权重就 140GB，一张 A100 80G 放不下</li><li><strong>训练太慢</strong>：单卡训 70B 需要 200 年，一千张卡只需 70 天</li><li><strong>batch size 不够</strong>：大 batch 让梯度更新更稳定，单卡撑不起大 batch</li></ol></div>
+<h2 id="sec2">4.2 Data Parallelism（数据并行）</h2>
+<p>最简单直接——把数据分到多张卡上，每张卡有<strong>完整的模型副本</strong>，处理不同数据。</p>
+<div class="diagram">  Batch 0  [数据₁ 数据₂ 数据₃ 数据₄]
+              ↓         ↓        ↓        ↓
+            GPU 0     GPU 1    GPU 2    GPU 3
+            [模型]    [模型]   [模型]   [模型]
+              ↓         ↓        ↓        ↓
+  All-Reduce ──────────────────────────────→ 同步梯度
+                      ↓
+         每张卡更新参数（更新后完全相同）</div>
+<h3 id="sec3">DDP（Distributed Data Parallel）</h3>
+<p>PyTorch 的标准数据并行实现：每张卡独立计算梯度，通过 <strong>Ring All-Reduce</strong> 高效同步梯度。</p>
+<ul><li>✅ 实现简单——加一行代码即可</li><li>✅ 通信效率高（Ring All-Reduce，通信量与卡数无关）</li><li>❌ 每张卡存完整模型，显存占用大</li></ul>
+<pre>from torch.nn.parallel import DistributedDataParallel
+model = MyModel().to(device)
+model = DDP(model, device_ids=[local_rank])
+# 训练代码几乎不用改！</pre>
+<h2 id="sec4">4.3 FSDP / ZeRO——省显存的数据并行</h2>
+<p>DDP 的问题是每张卡存了一个完整模型。FSDP（Fully Sharded Data Parallelism）和 DeepSpeed ZeRO 把<strong>模型参数、梯度、优化器状态</strong>分片到各卡上，用的时候再收集。</p>
+<h3>ZeRO 的三个 Stage</h3>
+<div class="diagram">  Stage 1: 分片优化器状态（显存省 ~4×）
+  [模型: 全] [梯度: 全] [优化器状态: 分片]
+
+  Stage 2: 分片梯度（显存省 ~6×）
+  [模型: 全] [梯度: 分片] [优化器状态: 分片]
+
+  Stage 3: 分片模型参数（显存省 ~N×）
+  [模型: 分片] [梯度: 分片] [优化器状态: 分片]
+
+  N = GPU 数量。4 卡训 7B FP16：
+  DDP 需要: 56 GB（14×4）
+  ZeRO-3 每卡: ~14 GB 模型参数（每次只加载 1/N）
+  + 分片梯度/优化器 → 每卡约 20 GB</div>
+<table><tr><th></th><th>每卡显存（7B）</th><th>每卡显存（70B）</th><th>通信量</th></tr>
+<tr><td>DDP</td><td>~56 GB</td><td>~560 GB（不可能）</td><td>O(1)</td></tr>
+<tr><td>ZeRO Stage 1</td><td>~28 GB</td><td>~280 GB</td><td>O(1)</td></tr>
+<tr><td>ZeRO Stage 2</td><td>~12 GB</td><td>~120 GB</td><td>O(1)</td></tr>
+<tr><td>ZeRO Stage 3</td><td>~8 GB</td><td>~20 GB（8卡分摊）</td><td>O(N) 更多</td></tr>
+</table>
+<div class="card purple"><h4>⚡ ZeRO 实战口诀</h4><p>显存够用就用 Stage 2（性能最优）<br>显存紧张上 Stage 3（但通信开销大）<br>单机多卡 NVLink：FSDP ≈ ZeRO Stage 3<br>多机多卡 Ethernet：优先 ZeRO Stage 2</p></div>
+<h2 id="sec5">4.4 模型并行（TP / PP）</h2>
+<p>当模型大到一张卡连一层都放不下时，需要把模型本身拆开。</p>
+<h3>Tensor Parallelism（张量并行）</h3>
+<p>把一个层的计算切分到多张卡上例如将 Attention 的 head 分给不同的 GPU。</p>
+<div class="diagram">  一个 Transformer Layer
+  ┌────────────────────────────────┐
+  │    Multi-Head Attention         │
+  │  ┌───┬───┬───┬───┬───┬───┐    │
+  │  │ h₁│ h₂│ h₃│ h₄│ h₅│ h₆│    │  ← Head 分到 2 卡
+  │  └───┴───┴───┴───┴───┴───┘    │
+  │        ↓ all-reduce             │
+  └────────────────────────────────┘
+
+  GPU1: heads 1-3       GPU2: heads 4-6
+  ┌──────────────────┐  ┌──────────────────┐
+  │ Q₁ K₁ V₁ → h₁-3  │  │ Q₂ K₂ V₂ → h₄-6  │
+  │ SwiGLU FFN 1/2    │  │ SwiGLU FFN 1/2    │
+  └──────────────────┘  └──────────────────┘
+         ↑ all-reduce after each matmul</div>
+<h3>Pipeline Parallelism（流水线并行）</h3>
+<p>把不同层放在不同 GPU 上，数据像流水线一样在 GPU 间传递。</p>
+<div class="diagram">  GPU 0: Layer 1-10
+     ↓ (GPU 间通信)
+  GPU 1: Layer 11-20
+     ↓
+  GPU 2: Layer 21-30
+     ↓
+  GPU 3: Layer 31-40</div>
+<p>3D 并行 = Data Parallelism × Tensor Parallelism × Pipeline Parallelism，这是训练千亿参数模型的标准方案。</p>
+<h2 id="sec6">4.5 混合精度训练</h2>
+<p>用 <strong>FP16/BF16 计算梯度</strong>，用 <strong>FP32 维护参数</strong>。训练速度 ~2×，显存减半。</p>
+<div class="diagram">  FP32: [1.8e-38 到 3.4e+38]   精度高，显存大
+  FP16: [6.1e-5 到 6.5e+4]     显存减半，范围窄
+  BF16: [1.2e-38 到 3.4e+38]   同 FP32 范围，精度低
+  TF32: FP32 尾数精度 + FP16 范围，NVIDIA Ampere 专用</div>
+<h3>推荐的混合精度策略</h3>
+<table><tr><th>GPU</th><th>推荐 dtype</th><th>说明</th></tr>
+<tr><td>A100 / H100</td><td>BF16</td><td>范围大，训练稳定，性能与 FP16 相当</td></tr>
+<tr><td>V100 / T4</td><td>FP16</td><td>不支持 BF16，需配合 loss scaling</td></tr>
+<tr><td>RTX 30/40 系列</td><td>BF16 或 FP16</td><td>BF16 稳定性更好</td></tr>
+</table>
+<h2 id="sec7">4.6 总结</h2>
+<div class="card green"><h4>📌 选择策略的决策指南</h4><ol><li><strong>单卡能放下模型</strong> → DDP（最简单高效）</li><li><strong>卡多但卡小</strong> → FSDP / ZeRO Stage 3</li><li><strong>模型单卡放不下</strong> → Tensor Parallelism + Pipeline Parallelism</li><li><strong>千亿参数</strong> → 3D 并行（DP + TP + PP）+ ZeRO</li><li><strong>永远开混合精度</strong> → BF16（首选）或 FP16 + loss scaling</li></ol></div>
+<p style="color:var(--dim);margin-top:40px;">下一章讲微调——在不重新训整个模型的情况下定制模型能力。</p>
+</div>
+<script>(function(){var s=document.getElementById('sidebar');var tocs=s.querySelectorAll('a.toc');function updateActive(){var scrollY=window.scrollY+120;var activeId=null;tocs.forEach(function(toc){var target=document.getElementById(toc.getAttribute('data-target'));if(!target)return;if(target.offsetTop<=scrollY)activeId=toc.getAttribute('data-target');});tocs.forEach(function(toc){var isActive=toc.getAttribute('data-target')===activeId;toc.classList.toggle('active',isActive);});}window.addEventListener('scroll',updateActive);window.addEventListener('load',updateActive);tocs.forEach(function(toc){toc.addEventListener('click',function(e){e.preventDefault();var target=document.getElementById(this.getAttribute('data-target'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'});});});})();</script></body></html>

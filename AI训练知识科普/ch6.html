@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第六章 · 推理优化</title>
+<style>:root{--bg:#0a0e14;--card:#11161e;--card-border:#1e2a3a;--border:#1e2a3a;--text:#e0e6ef;--dim:#6a7b8c;--accent:#00b4ff;--accent2:#00e676;--accent3:#b388ff;--accent4:#ff9100;--code:#0d1219;--highlight:#162233;--shadow:rgba(0,180,255,0.06)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.8}.sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--card);border-right:2px solid var(--border);padding:24px 0;overflow-y:auto;z-index:10}.sidebar .title{padding:0 20px 16px;border-bottom:2px solid var(--border);margin-bottom:12px}.sidebar .title a{color:var(--accent);text-decoration:none;font-weight:600;font-size:0.9em;letter-spacing:0.5px}.sidebar .title h3{font-size:1.1em;margin-top:4px}.sidebar a.toc{display:block;padding:8px 20px;color:var(--dim);text-decoration:none;font-size:0.88em;transition:all .1s;border-left:2px solid transparent}.sidebar a.toc:hover{color:var(--text);background:rgba(0,180,255,.03)}.sidebar a.toc.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,180,255,.06)}.sidebar a.toc.h2{padding-left:32px;font-size:0.82em}.main{margin-left:260px;padding:40px 48px 80px;max-width:900px}.main h1{font-size:2.2em;margin-bottom:8px;color:var(--text);letter-spacing:1px}.main h1 span{color:var(--accent)}.main .sub{color:var(--dim);margin-bottom:32px;font-size:0.95em}.main h2{font-size:1.5em;margin-top:48px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border);color:var(--accent);letter-spacing:0.5px}.main h3{font-size:1.15em;margin-top:28px;margin-bottom:12px;color:var(--accent2)}.main p{margin-bottom:14px}.main ul,.main ol{padding-left:22px;margin-bottom:14px}.main li{margin-bottom:6px}.main code{background:var(--code);padding:2px 7px;font-size:0.88em;font-family:"Cascadia Code","JetBrains Mono",monospace;border:1px solid var(--card-border)}.main pre{background:var(--code);border:2px solid var(--card-border);padding:18px;overflow-x:auto;margin-bottom:18px;font-size:0.88em;line-height:1.45}.main pre code{background:none;padding:0;border:none}.main .formula{background:var(--card);border:1px solid var(--card-border);padding:14px 18px;margin-bottom:16px;font-family:"Cascadia Code","JetBrains Mono",monospace;font-size:0.9em;text-align:center;color:var(--accent3);border-left:2px solid var(--accent3)}.main .card{background:var(--card);border:1px solid var(--card-border);padding:20px;margin-bottom:18px}.main .card.blue{border-left:3px solid var(--accent)}.main .card.green{border-left:3px solid var(--accent2)}.main .card.purple{border-left:3px solid var(--accent3)}.main .card h4{color:var(--accent);margin-bottom:8px;font-size:1em;letter-spacing:0.5px}.main .card.green h4{color:var(--accent2)}.main .card.purple h4{color:var(--accent3)}.main table{width:100%;border-collapse:collapse;margin-bottom:18px;font-variant-numeric:tabular-nums}.main th,.main td{border:2px solid var(--border);padding:10px 14px;text-align:left;font-size:0.9em;white-space:nowrap}.main th{background:var(--card);color:var(--accent);font-weight:600;letter-spacing:0.5px}.main td{color:var(--dim)}.main .diagram{background:var(--code);border:2px solid var(--card-border);padding:20px;margin-bottom:18px;font-family:"Cascadia Code","JetBrains Mono","Fira Code",monospace;font-size:0.85em;line-height:1.45;white-space:pre;overflow-x:auto;color:var(--accent2);tab-size:4;-moz-tab-size:4}.back-link{display:inline-block;margin-bottom:24px;color:var(--dim);text-decoration:none;font-size:0.9em}.back-link:hover{color:var(--accent)}@media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:24px 20px 60px}}</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="title"><a href="index.html">← 返回目录</a><h3>第六章</h3></div>
+  <a href="#sec1" class="toc" data-target="sec1">6.1 推理的瓶颈</a>
+  <a href="#sec2" class="toc" data-target="sec2">6.2 KV Cache</a>
+  <a href="#sec3" class="toc h2" data-target="sec3">显存 vs 速度权衡</a>
+  <a href="#sec4" class="toc" data-target="sec4">6.3 Speculative Decoding</a>
+  <a href="#sec5" class="toc" data-target="sec5">6.4 量化推理</a>
+  <a href="#sec6" class="toc" data-target="sec6">6.5 推理框架</a>
+  <a href="#sec7" class="toc h2" data-target="sec7">vLLM 原理</a>
+  <a href="#sec8" class="toc h2" data-target="sec8">llama.cpp</a>
+  <a href="#sec9" class="toc h2" data-target="sec9">TensorRT-LLM</a>
+  <a href="#sec10" class="toc" data-target="sec10">6.6 总结</a>
+</div>
+<div class="main" id="main">
+<a href="index.html" class="back-link">← 返回目录</a>
+<h1>第六章<span>·</span>推理优化</h1>
+<p class="sub">训练是艺术，推理是工程。同样一个模型，经过优化可以快 10 倍、省 5 倍显存。</p>
+<h2 id="sec1">6.1 推理的瓶颈</h2>
+<div class="card blue"><h4>💡 推理的两个阶段</h4><p>自回归推理 = <strong>Prefill</strong>（预填充）+ <strong>Decode</strong>（逐词生成）。两个阶段有不同的瓶颈。</p></div>
+<div class="diagram">  Prefill（一次）                  Decode（逐词，K 步）
+  输入: "用 Java 写一个二分"       第 1 步: 输出 "查"  → 更新 KV Cache
+                                  第 2 步: 输出 "找"  → 更新 KV Cache
+  并行计算所有输入 token 的         第 3 步: 输出 "算"  → 更新 KV Cache
+  attention                       第 4 步: 输出 "法"  → 更新 KV Cache
+
+  瓶颈: 计算密集（matrix multiply）   瓶颈: 访存密集（Memory Bound）
+  一次读完整个 prompt               每步只生成一个 token，重复从显存读取 KV Cache</div>
+<p>一个 70B 模型推理的时间分布：</p>
+<ul><li>Prefill（假设 512 tokens）：~30% 总延迟</li><li>Decode（假设 256 tokens）：~70% 总延迟</li><li>随着序列变长，Decode 占比越来越大</li></ul>
+<h2 id="sec2">6.2 KV Cache</h2>
+<p><strong>核心思想</strong>：自回归推理时，每生成一个新 token，都要计算它与之前所有 token 的 Attention。但之前 token 的 K 和 V 每次都是一样的——为什么不缓存起来？</p>
+<div class="diagram">  第 1 步时（没有 Cache）:
+  Q_new = Embed(tok₁)
+  计算 Attn(Q_new, K_all, V_all) → 重新算所有 K, V  → 慢！
+
+  第 2 步后（有 Cache）:
+  Cache: K = [K₁, K₂], V = [V₁, V₂]      ← 上次算过的
+  Q_new = Embed(tok₃)
+  K_new = W_K · Q_new
+  V_new = W_V · Q_new
+  Attn(Q_new, [K_cache; K_new], [V_cache; V_new])
+        ↑ 用缓存的 K,V + 当前这一步新的 K,V
+
+  第 3 步后:
+  Cache = [K₁, K₂, K₃], [V₁, V₂, V₃]   ← 不断追加</div>
+<h3 id="sec3">KV Cache 的代价</h3>
+<p>KV Cache 显著加速推理，但代价是<strong>显存</strong>——序列越长，Cache 越大。</p>
+<div class="formula">KV Cache 大小 = 2 × (num_layers × num_heads × d_head) × seq_len × precision_bits / 8<br><br>举例: LLaMA-3-7B (32层, 32 heads, d_head=128, FP16)<br>每 token: 2 × 32 × 32 × 128 × 2 = 524,288 bytes = 0.5 MB / token<br>4K 序列: 0.5 × 4096 = 2 GB<br>32K 序列: 0.5 × 32768 = 16 GB</div>
+<p>KV Cache 优化方向：</p>
+<ul><li><strong>MQA</strong>：多个 Query Head 共享同一组 KV，KV 量减为 1/h</li><li><strong>GQA</strong>：折中方案，分组共享KV</li><li><strong>KV Cache 量化</strong>：把 Cache 里的 K/V 量化到 INT8 甚至 INT4</li><li><strong>PagedAttention</strong>：vLLM 的核心创新，类似虚拟内存管理 KV Cache</li></ul>
+<div class="card purple"><h4>🔑 MHA vs MQA vs GQA</h4><table><tr><th>方案</th><th>Query Heads</th><th>KV Heads</th><th>KV Cache</th><th>模型举例</th></tr>
+<tr><td>MHA（标准）</td><td>h</td><td>h</td><td>×1</td><td>LLaMA 1, GPT-3</td></tr>
+<tr><td>MQA</td><td>h</td><td>1</td><td>×1/h</td><td>PaLM, Falcon</td></tr>
+<tr><td>GQA</td><td>h</td><td>h/g</td><td>×1/g</td><td>LLaMA 2/3 (8 KV heads)</td></tr>
+</table></div>
+<h2 id="sec4">6.3 Speculative Decoding（推测解码）</h2>
+<p>标准自回归推理每步只能生成 1 个 token。Speculative Decoding 让你一次试探多个 token。</p>
+<div class="card blue"><h4>💡 类比</h4><p>好比写代码时 IDE 的自动补全——先猜你接下来要打什么，猜对了直接接受，猜错了再自己打。</p></div>
+<div class="diagram">  标准解码（每步生成 1 个 token）:
+  模型 → 生成 "你好" → 生成 "世界" → 生成 "！"
+          Step 1        Step 2        Step 3         = 3 步
+
+  Speculative Decoding（用小模型做 draft）:
+  小模型快速 draft: "你好世界！"（轻量，快）
+  大模型校验: ✅ "你好" ✅ "世界" + ❌ "！"（实际应该是"。"）
+
+  大模型只做了 1 次前向传播，就校验了 3 个 token！
+  其中 2 个正确 → 收获了 2 步的加速！</div>
+<pre>from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-7B")
+draft_model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-0.5B")
+
+outputs = model.generate(
+    inputs,
+    assistant_model=draft_model,   # 用 0.5B 做 draft 模型
+    max_new_tokens=256,
+)</pre>
+<h2 id="sec5">6.4 量化推理</h2>
+<p>推理侧的量化更常见：直接用 <strong>INT4/INT8 模型做推理</strong>。</p>
+<div class="diagram">  GPU 推理显存需求:
+
+  模型  |  FP16        |  INT8        |  INT4
+  ──────┼──────────────┼──────────────┼────────────
+  7B    |  ~14 GB      |  ~7 GB       |  ~3.5 GB
+  13B   |  ~26 GB      |  ~13 GB      |  ~6.5 GB
+  34B   |  ~68 GB      |  ~34 GB      |  ~17 GB
+  70B   |  ~140 GB     |  ~70 GB      |  ~35 GB</div>
+<h2 id="sec6">6.5 主流推理框架</h2>
+<h3 id="sec7">vLLM</h3>
+<p>vLLM 的核心创新是 <strong>PagedAttention</strong>——把 KV Cache 分页管理。</p>
+<div class="diagram">  传统 KV Cache: 连续显存区域（固定大小），大量碎片浪费
+
+  请求1: [K₁|K₂|K₃|...|K₂₀₄₈|_|_|_|_]    ← 预留完整长度
+  请求2: [K₁|K₂|_|_|_|...|_|_|_|_|_]      ← 大量碎片浪费
+
+  PagedAttention: 分页缓存（按需分配 16-token/page）
+
+  请求1: Page[3]→Page[7]→Page[12]→Page[4]  ← 逻辑连续，物理离散
+  请求2: Page[1]→Page[9]
+
+  ✅ 没有碎片，显存利用率从 30% → 95%
+  ✅ 支持 Copy-on-Write（多个请求共享前缀）</div>
+<h3 id="sec8">llama.cpp</h3>
+<p>纯 CPU 推理引擎，支持 GGUF 格式。</p><ul><li>✅ 纯 C++ 实现，无 GPU 依赖</li><li>✅ 各种量化格式（Q2~Q8、IQ 系列）</li><li>✅ 集成 OpenAI 兼容 API</li></ul>
+<h3 id="sec9">TensorRT-LLM</h3>
+<p>NVIDIA 官方推理优化引擎，极高吞吐但需要 NVIDIA GPU。</p>
+<table><tr><th>框架</th><th>GPU/CPU</th><th>吞吐</th><th>上手难度</th><th>推荐场景</th></tr>
+<tr><td>vLLM</td><td>GPU</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td><td>生产级 API 服务</td></tr>
+<tr><td>llama.cpp</td><td>CPU+GPU</td><td>⭐⭐⭐</td><td>⭐</td><td>个人桌面推理</td></tr>
+<tr><td>TensorRT-LLM</td><td>GPU( NVIDIA)</td><td>⭐⭐⭐⭐⭐+</td><td>⭐⭐⭐⭐</td><td>高性能生产服务</td></tr>
+<tr><td>Hugging Face TGI</td><td>GPU</td><td>⭐⭐⭐⭐</td><td>⭐⭐</td><td>通用推理服务</td></tr>
+</table>
+<h2 id="sec10">6.6 总结</h2>
+<div class="card green"><h4>📌 推理优化检查清单</h4><ol><li><strong>量化模型</strong>：先用 Q4_K_M 或 AWQ 4-bit，显存省 75%</li><li><strong>用 vLLM</strong>：PagedAttention 大幅提升吞吐和显存利用率</li><li><strong>GQA 模型优先</strong>：选 LLaMA 3 / Qwen 2.5 等 GQA 模型，KV Cache 减半</li><li><strong>Speculative Decoding</strong>：有 draft 模型的话 2-3x 加速</li><li><strong>Flash Attention</strong>：长序列推理必备</li><li><strong>连续批处理</strong>：服务多个请求时性能比逐条推理好得多</li></ol></div>
+</div>
+<script>(function(){var s=document.getElementById('sidebar');var tocs=s.querySelectorAll('a.toc');function updateActive(){var scrollY=window.scrollY+120;var activeId=null;tocs.forEach(function(toc){var target=document.getElementById(toc.getAttribute('data-target'));if(!target)return;if(target.offsetTop<=scrollY)activeId=toc.getAttribute('data-target');});tocs.forEach(function(toc){var isActive=toc.getAttribute('data-target')===activeId;toc.classList.toggle('active',isActive);});}window.addEventListener('scroll',updateActive);window.addEventListener('load',updateActive);tocs.forEach(function(toc){toc.addEventListener('click',function(e){e.preventDefault();var target=document.getElementById(this.getAttribute('data-target'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'});});});})();</script></body></html>

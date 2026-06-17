@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第二章 · Transformer 架构深度解析</title>
+<style>:root{--bg:#0a0e14;--card:#11161e;--card-border:#1e2a3a;--border:#1e2a3a;--text:#e0e6ef;--dim:#6a7b8c;--accent:#00b4ff;--accent2:#00e676;--accent3:#b388ff;--accent4:#ff9100;--code:#0d1219;--highlight:#162233;--shadow:rgba(0,180,255,0.06)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.8}.sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--card);border-right:2px solid var(--border);padding:24px 0;overflow-y:auto;z-index:10}.sidebar .title{padding:0 20px 16px;border-bottom:2px solid var(--border);margin-bottom:12px}.sidebar .title a{color:var(--accent);text-decoration:none;font-weight:600;font-size:0.9em;letter-spacing:0.5px}.sidebar .title h3{font-size:1.1em;margin-top:4px}.sidebar a.toc{display:block;padding:8px 20px;color:var(--dim);text-decoration:none;font-size:0.88em;transition:all .1s;border-left:2px solid transparent}.sidebar a.toc:hover{color:var(--text);background:rgba(0,180,255,.03)}.sidebar a.toc.active{color:var(--accent);border-left-color:var(--accent);background:rgba(0,180,255,.06)}.sidebar a.toc.h2{padding-left:32px;font-size:0.82em}.main{margin-left:260px;padding:40px 48px 80px;max-width:900px}.main h1{font-size:2.2em;margin-bottom:8px;color:var(--text);letter-spacing:1px}.main h1 span{color:var(--accent)}.main .sub{color:var(--dim);margin-bottom:32px;font-size:0.95em}.main h2{font-size:1.5em;margin-top:48px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border);color:var(--accent);letter-spacing:0.5px}.main h3{font-size:1.15em;margin-top:28px;margin-bottom:12px;color:var(--accent2)}.main p{margin-bottom:14px}.main ul,.main ol{padding-left:22px;margin-bottom:14px}.main li{margin-bottom:6px}.main code{background:var(--code);padding:2px 7px;font-size:0.88em;font-family:"Cascadia Code","JetBrains Mono",monospace;border:1px solid var(--card-border)}.main pre{background:var(--code);border:2px solid var(--card-border);padding:18px;overflow-x:auto;margin-bottom:18px;font-size:0.88em;line-height:1.45}.main pre code{background:none;padding:0;border:none}.main .formula{background:var(--card);border:1px solid var(--card-border);padding:14px 18px;margin-bottom:16px;font-family:"Cascadia Code","JetBrains Mono",monospace;font-size:0.9em;text-align:center;color:var(--accent3);border-left:2px solid var(--accent3)}.main .card{background:var(--card);border:1px solid var(--card-border);padding:20px;margin-bottom:18px}.main .card.blue{border-left:3px solid var(--accent)}.main .card.green{border-left:3px solid var(--accent2)}.main .card.purple{border-left:3px solid var(--accent3)}.main .card h4{color:var(--accent);margin-bottom:8px;font-size:1em;letter-spacing:0.5px}.main .card.green h4{color:var(--accent2)}.main .card.purple h4{color:var(--accent3)}.main table{width:100%;border-collapse:collapse;margin-bottom:18px;font-variant-numeric:tabular-nums}.main th,.main td{border:2px solid var(--border);padding:10px 14px;text-align:left;font-size:0.9em;white-space:nowrap}.main th{background:var(--card);color:var(--accent);font-weight:600;letter-spacing:0.5px}.main td{color:var(--dim)}.main .diagram{background:var(--code);border:2px solid var(--card-border);padding:20px;margin-bottom:18px;font-family:"Cascadia Code","JetBrains Mono","Fira Code",monospace;font-size:0.85em;line-height:1.45;white-space:pre;overflow-x:auto;color:var(--accent2);tab-size:4;-moz-tab-size:4}.back-link{display:inline-block;margin-bottom:24px;color:var(--dim);text-decoration:none;font-size:0.9em}.back-link:hover{color:var(--accent)}@media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:24px 20px 60px}}</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="title"><a href="index.html">← 返回目录</a><h3>第二章</h3></div>
+  <a href="#sec1" class="toc" data-target="sec1">2.1 从 RNN 到 Transformer</a>
+  <a href="#sec2" class="toc h2" data-target="sec2">2.2 Scaled Dot-Product Attention</a>
+  <a href="#sec3" class="toc h2" data-target="sec3">2.3 Multi-Head Attention</a>
+  <a href="#sec4" class="toc" data-target="sec4">2.4 Transformer 整体架构</a>
+  <a href="#sec5" class="toc h2" data-target="sec5">2.5 Positional Encoding</a>
+  <a href="#sec6" class="toc h2" data-target="sec6">2.6 RMS Norm</a>
+  <a href="#sec7" class="toc h2" data-target="sec7">2.7 RoPE</a>
+  <a href="#sec8" class="toc h2" data-target="sec8">2.8 其他关键组件</a>
+  <a href="#sec9" class="toc" data-target="sec9">2.9 总结</a>
+</div>
+<div class="main" id="main">
+<a href="index.html" class="back-link">← 返回目录</a>
+<h1>第二章<span>·</span>Transformer 架构深度解析</h1>
+<p class="sub">没有 Transformer 就没有今天的 LLM。理解它的每一个组件的设计哲学。</p>
+<h2 id="sec1">2.1 从 RNN 到 Transformer——为什么需要 Attention？</h2>
+<p>在 Transformer 之前，序列建模的主角是 <strong>RNN（循环神经网络）</strong>。RNN 逐个 token 读取输入，维护一个隐藏状态 h_t 作为"记忆"。</p>
+<div class="card blue"><h4>💡 RNN 的致命伤</h4><p>长距离依赖问题：一个句子开头的词对结尾的影响随着距离指数级衰减（梯度消失/爆炸）。当序列长度超过 100，RNN 基本上"记不住"开头说了什么。</p></div>
+<div class="diagram">  RNN（逐词读取，串行，慢）:
+  "我" → h₁ → "爱" → h₂ → "你" → h₃ → 输出
+  每一步依赖上一步，无法并行 ❌
+
+  Transformer（一次读完，并行，快）:
+  ["我", "爱", "你"] → ┌──────────────────┐
+                       │    Attention     │ ← 每个词可以直接"看"所有词
+                       └──────────────────┘ → 输出
+  所有词同时处理，并行 ✅
+  每个词通过 Attention 直接关注句子中任意位置的词 ✅</div>
+<p>2017 年 Google 的论文 <em>"Attention Is All You Need"</em> 彻底改变了 NLP。核心思想：用 Attention 机制替代 RNN 的循环结构。</p>
+<h2 id="sec2">2.2 Scaled Dot-Product Attention</h2>
+<p>Attention 的核心：给定一个 Query（查询），在一堆 Key-Value 对中找出最相关的信息。</p>
+<div class="formula">Attention(Q, K, V) = softmax(Q · Kᵀ / √d_k) · V</div>
+<div class="diagram">  一个简单的例子——翻译 "I love you"
+
+  Query: "love"（当前要翻译的词）
+  Key:   ["I", "love", "you"]（源句子中每个词的身份）
+  Value: ["我", "爱", "你"]（源句子中每个词的含义）
+
+  步骤:
+  1. Q·Kᵀ = [0.2, 1.0, 0.3]    ← love 与每个词的相似度分数
+  2. 除以 √d_k 缩放（防止 softmax 梯度消失）
+  3. softmax → [0.1, 0.7, 0.2]  ← 归一化到概率
+  4. × V → 0.1×"我" + 0.7×"爱" + 0.2×"你" = "爱"</div>
+<div class="card green"><h4>🔑 除以 √d_k 的意义</h4><p>当 d_k 很大时，点积 Q·K 的方差也大，softmax 的梯度会趋于 0。除以 √d_k 把方差稳定在 1 附近，梯度更好传播。</p></div>
+<h2 id="sec3">2.3 Multi-Head Attention</h2>
+<p>不是只做一次 Attention，而是做 <strong>h 次</strong>（通常是 8-32 次），每次用不同的线性投影把 Q/K/V 映射到不同的子空间。</p>
+<div class="formula">MultiHead(Q,K,V) = Concat(head₁, ..., head_h) · Wᵒ<br>其中 head_i = Attention(Q·Wᵢ^Q, K·Wᵢ^K, V·Wᵢ^V)</div>
+<div class="diagram">  [Q, K, V]
+      ↓
+  ┌──────────────────────────┐
+  │ Split into h heads       │
+  │ ┌────┐ ┌────┐    ┌────┐ │
+  │ │ h₁ │ │ h₂ │ .. │ h₈ │ │  ← 每个 head 在不同子空间做 Attention
+  │ └────┘ └────┘    └────┘ │
+  └──────────────────────────┘
+      ↓ Concat
+      ↓ Linear Projection (Wᵒ)
+      ↓
+  Multi-Head Attention 输出</div>
+<p>好处：每个 head 可以关注不同的关系——语法关系、语义关系、位置关系等，丰富了模型的表现力。</p>
+<table><thead><tr><th>模型</th><th>d_model</th><th>n_heads</th><th>d_head</th><th>n_kv_heads</th></tr></thead><tbody>
+<tr><td>LLaMA 3 8B</td><td>4096</td><td>32</td><td>128</td><td>8 (GQA)</td></tr>
+<tr><td>LLaMA 3 70B</td><td>8192</td><td>64</td><td>128</td><td>8 (GQA)</td></tr>
+<tr><td>GPT-3 175B</td><td>12288</td><td>96</td><td>128</td><td>96 (MHA)</td></tr>
+</tbody></table>
+<h2 id="sec4">2.4 Transformer 整体架构</h2>
+<div class="diagram">  ┌────────────────────────────────────────────┐
+  │                   Output                      │
+  │                      ↑                        │
+  │              Linear + Softmax                 │
+  │                      ↑                        │
+  │          ┌─────────────────────┐              │
+  │          │     Decoder ×N      │              │
+  │          │  ┌───────────────┐  │              │
+  │          │  │Masked MHAttn  │  │← 只能看已生成 │
+  │          │  └──────↑────────┘  │              │
+  │          │  ┌──────↑────────┐  │              │
+  │          │  │Cross-Attention│  │← 看 Encoder  │
+  │          │  └──────↑────────┘  │              │
+  │          │  ┌──────↑────────┐  │              │
+  │          │  │  FFN (SwiGLU) │  │              │
+  │          │  └───────────────┘  │              │
+  │          └─────────────────────┘              │
+  │                      ↑                        │
+  │          ┌─────────────────────┐              │
+  │          │     Encoder ×N      │              │
+  │          │  ┌───────────────┐  │              │
+  │          │  │Self-Attention │  │← 所有词互看  │
+  │          │  └──────↑────────┘  │              │
+  │          │  ┌──────↑────────┐  │              │
+  │          │  │     FFN       │  │              │
+  │          │  └───────────────┘  │              │
+  │          └─────────────────────┘              │
+  │                      ↑                        │
+  │                   Input                       │
+  └──────────────────────────────────────────────┘</div>
+<p><strong>现代 LLM 大部分是 Decoder-Only</strong>（GPT、LLaMA、Qwen）。只需要图中的 Decoder 部分，去掉 Cross-Attention。因为 LLM 是"自回归"生成——每次只看自己已经生成的词，不需要 Encoder 的输入。</p>
+<h2 id="sec5">2.5 Positional Encoding</h2>
+<p>Attention 本身是<strong>排列不变</strong>的——"我打你"和"你打我"在 Attention 看来是一样的，因为词序信息没有被编码。</p>
+<p>所以需要 Positional Encoding 告诉模型"每个词的位置"。</p>
+<h3>绝对位置编码（Sinusoidal）</h3>
+<div class="formula">PE(pos, 2i)   = sin(pos / 10000^(2i/d_model))<br>PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))</div>
+<p>用不同频率的正弦/余弦波来编码位置。</p>
+<ul><li>✅ 可以外推到更长的序列（不需要训练）</li><li>❌ 每个位置编码是固定的，无法反映相对位置关系</li></ul>
+<h3>可学习位置编码（Learnable Positional Encoding）</h3>
+<p>直接把位置索引映射为可训练的嵌入向量。</p>
+<ul><li>✅ 灵活，模型自己学会位置表示</li><li>❌ 最大序列长度固定（比如 2048），超过就崩</li></ul>
+<h2 id="sec6">2.6 RMS Norm（Root Mean Square Layer Normalization）</h2>
+<p>在 LLM 中，LayerNorm 被替换为 <strong>RMS Norm</strong>，它更简单、计算更快。</p>
+<div class="formula">RMSNorm(x) = x / sqrt(mean(x²) + ε) · γ</div>
+<p>相比 LayerNorm，RMSNorm 去掉了减均值的操作，只做"缩放"。</p>
+<ul><li>✅ 计算量减少 ~5-10%（LLM 训练中很重要）</li><li>✅ 效果与 LayerNorm 几乎一致</li><li>✅ LLaMA、Qwen 等都用它</li></ul>
+<h2 id="sec7">2.7 RoPE（Rotary Position Embedding）</h2>
+<p>RoPE 是目前 LLM 中最主流的<strong>相对位置编码</strong>方案。它不是把位置信息加到输入上，而是<strong>旋转 Q 和 K 向量</strong>。</p>
+<div class="formula">RoPE: f(q, m) = q · cos(mθ) + q_rotated · sin(mθ)</div>
+<div class="card blue"><h4>💡 直觉</h4><p>想象一个旋转的指针：位置 m 对应一个旋转角度，Q 和 K 旋转后做点积，结果天然蕴含了<strong>相对位置信息</strong>——越近的词点积越大，越远的词点积越小。</p></div>
+<ul><li>✅ 天然编码<strong>相对位置</strong>（两个 token 之间距离的重要性）</li><li>✅ 可以外推到训练时未见过的序列长度（LLaMA 3 从 8K 外推到 128K）</li><li>✅ 不增加额外参数</li></ul>
+<h2 id="sec8">2.8 其他关键组件</h2>
+<h3>Feed-Forward Network (FFN) / MLP</h3>
+<div class="formula">FFN(x) = SwiGLU(x · W_gate) ⊙ (x · W_up) · W_down</div>
+<p>每个 Transformer 层都有一个 FFN，对每个位置的表示做非线性变换。LLaMA 的 FFN 用的是 SwiGLU（有门控的 FFN）。</p>
+<h3>Residual Connection（残差连接）</h3>
+<div class="formula">output = Layer(x) + x</div>
+<p>每个子层的输入直接加到输出上。这帮助梯度直接流回浅层，缓解梯度消失，让超深网络（100+ 层）变得可训练。</p>
+<h3>Pre-Norm vs Post-Norm</h3>
+<table><thead><tr><th>方案</th><th>位置</th><th>特点</th><th>代表模型</th></tr></thead><tbody>
+<tr><td>Post-Norm（原始）</td><td>LayerNorm 在子层之后</td><td>原始 Transformer，训练不稳定</td><td>原始 Transformer</td></tr>
+<tr><td>Pre-Norm（现代标准）</td><td>LayerNorm 在子层之前</td><td>训练更稳定，warmup 步骤少</td><td>GPT, LLaMA, Qwen</td></tr>
+</tbody></table>
+<h2 id="sec9">2.9 总结</h2>
+<div class="card green"><h4>📌 核心要点</h4><ol><li><strong>Attention</strong> 让每个 token 直接关注所有 token</li><li><strong>Multi-Head</strong> 从不同子空间学不同类型的注意力</li><li><strong>RoPE</strong> 实现相对位置编码且支持外推</li><li><strong>RMS Norm + Pre-Norm + Residual</strong> 让超深网络稳定训练</li><li><strong>SwiGLU FFN</strong> 提供更强的非线性表达能力</li></ol></div>
+<p style="color:var(--dim);margin-top:40px;">理解了 Transformer，下一章看看训练一个 LLM 的完整流程。</p>
+</div>
+<script>(function(){var s=document.getElementById('sidebar');var tocs=s.querySelectorAll('a.toc');function updateActive(){var scrollY=window.scrollY+120;var activeId=null;tocs.forEach(function(toc){var target=document.getElementById(toc.getAttribute('data-target'));if(!target)return;if(target.offsetTop<=scrollY)activeId=toc.getAttribute('data-target');});tocs.forEach(function(toc){var isActive=toc.getAttribute('data-target')===activeId;toc.classList.toggle('active',isActive);});}window.addEventListener('scroll',updateActive);window.addEventListener('load',updateActive);tocs.forEach(function(toc){toc.addEventListener('click',function(e){e.preventDefault();var target=document.getElementById(this.getAttribute('data-target'));if(target)target.scrollIntoView({behavior:'smooth',block:'start'});});});})();</script></body></html>
